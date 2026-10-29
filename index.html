@@ -130,5 +130,73 @@
     if(dateField){const today=new Date();dateField.min=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10)}
     document.querySelectorAll('a[href="#contato"]').forEach(a=>a.addEventListener('click',()=>{const s=document.getElementById('servico');if(s&&a.dataset.servico)s.value=a.dataset.servico}));
   </script>
+  <!-- Assistente de IA (Gemini) -->
+  <style>
+    .ai-fab{position:fixed;right:22px;bottom:22px;z-index:120;width:60px;height:60px;border-radius:50%;border:1px solid rgba(220,205,255,.3);background:linear-gradient(135deg,#9b5cff,#6d28d9);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 14px 40px rgba(124,58,237,.42);transition:transform .2s,box-shadow .2s}.ai-fab:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 18px 50px rgba(124,58,237,.55)}.ai-fab svg{width:28px;height:28px}.ai-fab .ai-close-ico{display:none}.ai-fab[aria-expanded="true"] .ai-open-ico{display:none}.ai-fab[aria-expanded="true"] .ai-close-ico{display:block}.ai-fab:after{content:"";position:absolute;inset:-5px;border-radius:50%;border:1px solid rgba(168,85,247,.45);animation:aiPulse 2.6s ease-out infinite;pointer-events:none}.ai-fab[aria-expanded="true"]:after{display:none}@keyframes aiPulse{0%{transform:scale(.92);opacity:.9}100%{transform:scale(1.35);opacity:0}}
+    .ai-panel{position:fixed;right:22px;bottom:96px;z-index:120;width:min(380px,calc(100vw - 32px));height:min(560px,calc(100vh - 130px));display:flex;flex-direction:column;border:1px solid rgba(196,181,253,.24);border-radius:22px;background:rgba(18,13,29,.97);backdrop-filter:blur(18px);box-shadow:0 30px 90px rgba(0,0,0,.55);overflow:hidden;opacity:0;transform:translateY(14px) scale(.98);pointer-events:none;visibility:hidden;transition:opacity .22s,transform .22s,visibility 0s .22s}.ai-panel.open{opacity:1;transform:none;pointer-events:auto;visibility:visible;transition:opacity .22s,transform .22s}
+    .ai-head{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line);background:linear-gradient(120deg,rgba(139,92,246,.16),transparent)}.ai-avatar{width:38px;height:38px;min-width:38px;border-radius:12px;display:grid;place-items:center;background:rgba(139,92,246,.2);border:1px solid rgba(196,181,253,.28);color:#d8ccff}.ai-avatar svg{width:20px;height:20px}.ai-head strong{display:block;font-family:'Space Grotesk',sans-serif;font-size:1rem;letter-spacing:-.02em}.ai-head span{font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:6px}.ai-head span:before{content:"";width:7px;height:7px;border-radius:50%;background:#4ade80}.ai-x{margin-left:auto;border:0;background:transparent;color:#c9c0d6;font-size:1.4rem;line-height:1;cursor:pointer;padding:4px 6px;border-radius:8px}.ai-x:hover{color:#fff;background:rgba(255,255,255,.06)}
+    .ai-body{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px;scrollbar-width:thin;scrollbar-color:#3b2b5a transparent}.ai-msg{max-width:86%;padding:11px 14px;border-radius:16px;font-size:.88rem;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}.ai-msg.bot{align-self:flex-start;background:#1f1730;border:1px solid rgba(211,195,255,.1);border-bottom-left-radius:5px;color:#e9e3f2}.ai-msg.user{align-self:flex-end;background:linear-gradient(120deg,#8b5cf6,#6d28d9);border-bottom-right-radius:5px;color:#fff}.ai-msg.error{border-color:rgba(248,113,113,.35);color:#fecaca}.ai-typing{display:inline-flex;gap:4px;padding:4px 0}.ai-typing i{width:6px;height:6px;border-radius:50%;background:#c4b5fd;animation:aiDot 1.2s infinite ease-in-out}.ai-typing i:nth-child(2){animation-delay:.15s}.ai-typing i:nth-child(3){animation-delay:.3s}@keyframes aiDot{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+    .ai-suggest{display:flex;flex-wrap:wrap;gap:7px}.ai-suggest button{border:1px solid rgba(196,181,253,.28);background:rgba(139,92,246,.08);color:#ddd3f5;border-radius:999px;padding:6px 11px;font-size:.76rem;cursor:pointer}.ai-suggest button:hover{background:rgba(139,92,246,.2)}
+    .ai-form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:rgba(9,7,15,.6)}.ai-form textarea{flex:1;resize:none;max-height:110px;min-height:44px;border:1px solid rgba(211,195,255,.17);border-radius:14px;background:#0d0915;color:#fff;padding:11px 13px;font-size:.88rem;outline:none;line-height:1.4}.ai-form textarea:focus{border-color:#9f70ff;box-shadow:0 0 0 3px rgba(139,92,246,.12)}.ai-form button{width:44px;min-width:44px;height:44px;border:0;border-radius:14px;background:linear-gradient(120deg,#9b5cff,#7137dd);color:#fff;cursor:pointer;display:grid;place-items:center;align-self:flex-end}.ai-form button:disabled{opacity:.45;cursor:not-allowed}.ai-form button svg{width:18px;height:18px}.ai-foot{font-size:.68rem;color:#6f667d;text-align:center;padding:0 12px 10px;background:rgba(9,7,15,.6)}
+    .toast{bottom:96px}
+    @media (max-width:520px){.ai-fab{right:16px;bottom:16px;width:56px;height:56px}.ai-panel{right:12px;left:12px;width:auto;bottom:84px;height:calc(100vh - 110px)}}
+    @media (prefers-reduced-motion:reduce){.ai-fab:after,.ai-typing i{animation:none}}
+  </style>
+  <button class="ai-fab" id="aiFab" type="button" aria-label="Abrir assistente de IA" aria-controls="aiPanel" aria-expanded="false">
+    <svg class="ai-open-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.6L18.5 9l-4.7 1.6L12 15l-1.8-4.4L5.5 9l4.7-1.4z"/><path d="M19 14l.9 2.1L22 17l-2.1.9L19 20l-.9-2.1L16 17l2.1-.9z"/><path d="M5 15l.6 1.4L7 17l-1.4.6L5 19l-.6-1.4L3 17l1.4-.6z"/></svg>
+    <svg class="ai-close-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <section class="ai-panel" id="aiPanel" role="dialog" aria-modal="false" aria-labelledby="aiTitle" aria-hidden="true">
+    <header class="ai-head">
+      <div class="ai-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.6L18.5 9l-4.7 1.6L12 15l-1.8-4.4L5.5 9l4.7-1.4z"/><path d="M19 14l.9 2.1L22 17l-2.1.9L19 20l-.9-2.1L16 17l2.1-.9z"/></svg></div>
+      <div><strong id="aiTitle">Assistente NOXUS</strong><span>IA online · tire suas dúvidas</span></div>
+      <button class="ai-x" id="aiClose" type="button" aria-label="Fechar assistente">×</button>
+    </header>
+    <div class="ai-body" id="aiBody" aria-live="polite">
+      <div class="ai-msg bot">Olá! Sou a assistente virtual da NOXUS. Posso tirar dúvidas sobre redes, Wi-Fi corporativo, servidores, segurança e suporte de TI. Como posso ajudar?</div>
+      <div class="ai-suggest" id="aiSuggest">
+        <button type="button">Quais serviços vocês oferecem?</button>
+        <button type="button">Meu Wi-Fi vive caindo, o que pode ser?</button>
+        <button type="button">Como funciona o diagnóstico?</button>
+      </div>
+    </div>
+    <form class="ai-form" id="aiForm">
+      <textarea id="aiInput" rows="1" maxlength="2000" placeholder="Digite sua pergunta..." aria-label="Sua pergunta" required></textarea>
+      <button type="submit" id="aiSend" aria-label="Enviar pergunta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    </form>
+    <div class="ai-foot">Respostas geradas por IA podem conter erros. Não envie senhas ou dados confidenciais.</div>
+  </section>
+  <script>
+    (()=>{
+      const fab=document.getElementById('aiFab'),panel=document.getElementById('aiPanel'),body=document.getElementById('aiBody'),form=document.getElementById('aiForm'),input=document.getElementById('aiInput'),send=document.getElementById('aiSend'),suggest=document.getElementById('aiSuggest');
+      const history=[];let busy=false;
+      const setOpen=open=>{panel.classList.toggle('open',open);panel.setAttribute('aria-hidden',String(!open));fab.setAttribute('aria-expanded',String(open));fab.setAttribute('aria-label',open?'Fechar assistente de IA':'Abrir assistente de IA');if(open)setTimeout(()=>input.focus(),80)};
+      fab.addEventListener('click',()=>setOpen(!panel.classList.contains('open')));
+      document.getElementById('aiClose').addEventListener('click',()=>{setOpen(false);fab.focus()});
+      document.addEventListener('keydown',e=>{if(e.key==='Escape'&&panel.classList.contains('open')){setOpen(false);fab.focus()}});
+      const addMsg=(cls,text)=>{const el=document.createElement('div');el.className='ai-msg '+cls;el.textContent=text;body.appendChild(el);body.scrollTop=body.scrollHeight;return el};
+      const autosize=()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,110)+'px'};
+      input.addEventListener('input',autosize);
+      input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit()}});
+      suggest.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{input.value=b.textContent;form.requestSubmit()}));
+      form.addEventListener('submit',async e=>{
+        e.preventDefault();const text=input.value.trim();if(!text||busy)return;
+        busy=true;send.disabled=true;suggest.remove();input.value='';autosize();
+        addMsg('user',text);history.push({role:'user',text});
+        const bot=addMsg('bot','');bot.innerHTML='<span class="ai-typing"><i></i><i></i><i></i></span>';
+        let answer='';
+        try{
+          const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:history})});
+          if(!res.ok||!res.body)throw new Error('HTTP '+res.status);
+          const reader=res.body.getReader(),dec=new TextDecoder();
+          while(true){const {done,value}=await reader.read();if(done)break;answer+=dec.decode(value,{stream:true});bot.textContent=answer;body.scrollTop=body.scrollHeight}
+          if(!answer.trim())throw new Error('Resposta vazia');
+          history.push({role:'model',text:answer});
+        }catch(err){
+          history.pop();bot.classList.add('error');bot.textContent='Não consegui responder agora. Tente novamente em instantes ou use o formulário de contato.';
+        }finally{busy=false;send.disabled=false;input.focus()}
+      });
+    })();
+  </script>
 </body>
 </html>
