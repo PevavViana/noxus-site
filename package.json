@@ -1,0 +1,9 @@
+{
+  "name": "noxus-site",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@google/genai": "^2.32.0",
+    "@netlify/functions": "^6.0.3"
+  }
+}
