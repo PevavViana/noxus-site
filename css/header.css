@@ -1,0 +1,167 @@
+/* =====================================================================
+   NOXUS — Header compartilhado (navbar + menu mobile + CTA)
+   Autocontido: funciona com styles.css E com Tailwind.
+   ===================================================================== */
+
+/* ---------- Navbar ---------- */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background-color: rgba(255, 255, 255, 0.85);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #e2e8f0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+               Roboto, Helvetica, Arial, sans-serif;
+}
+.navbar *, .navbar *::before, .navbar *::after { box-sizing: border-box; }
+
+.navbar-container {
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+@media (min-width: 640px)  { .navbar-container { padding-inline: 1.5rem; } }
+@media (min-width: 1024px) { .navbar-container { padding-inline: 2rem;   } }
+
+.navbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  height: 4rem;
+}
+
+/* ---------- Marca ---------- */
+.navbar-brand { display: inline-flex; align-items: center; }
+.navbar-brand img {
+  display: block;
+  height: 2rem;
+  width: auto;
+  transition: opacity .2s;
+}
+.navbar-brand:hover img { opacity: .8; }
+
+/* ---------- Links desktop ---------- */
+.navbar-links {
+  display: none;
+  align-items: center;
+  gap: 2rem;
+  font-size: .875rem;
+  font-weight: 500;
+}
+.navbar-link {
+  color: #475569;
+  text-decoration: none;
+  transition: color .2s;
+}
+.navbar-link:hover { color: #7e22ce; }
+.navbar-link.is-active {
+  color: #7e22ce;
+  font-weight: 600;
+}
+
+/* ---------- CTA desktop ---------- */
+.navbar-cta {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  background-color: #9333ea;
+  color: #fff;
+  font-size: .875rem;
+  font-weight: 600;
+  padding: .625rem 1.25rem;
+  border-radius: .5rem;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color .2s;
+  box-shadow: 0 10px 15px -3px rgba(88, 28, 135, .2),
+              0 4px 6px -4px rgba(88, 28, 135, .2);
+}
+.navbar-cta:hover { background-color: #7e22ce; }
+.navbar-cta svg { width: 1rem; height: 1rem; flex-shrink: 0; }
+
+/* ---------- Botão hambúrguer ---------- */
+.menu-btn {
+  display: inline-flex;
+  padding: .5rem;
+  border-radius: .5rem;
+  color: #475569;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color .2s, background-color .2s;
+}
+.menu-btn:hover {
+  color: #0f172a;
+  background-color: #f1f5f9;
+}
+.menu-btn svg { width: 1.5rem; height: 1.5rem; display: block; }
+.menu-btn .icon-close { display: none; }
+.menu-btn.is-open .icon-open  { display: none; }
+.menu-btn.is-open .icon-close { display: block; }
+
+/* ---------- Breakpoint desktop ---------- */
+@media (min-width: 768px) {
+  .navbar-links { display: flex; }
+  .navbar-cta   { display: inline-flex; }
+  .menu-btn     { display: none; }
+}
+
+/* ---------- Menu mobile ---------- */
+.mobile-menu {
+  display: none;
+  padding-bottom: 1rem;
+  padding-top: .75rem;
+  margin-top: .25rem;
+  border-top: 1px solid #e2e8f0;
+  background-color: #fff;
+}
+.mobile-menu.is-open { display: block; }
+@media (min-width: 768px) { .mobile-menu { display: none !important; } }
+
+.mobile-menu-inner {
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+  font-size: .875rem;
+  font-weight: 500;
+}
+
+.mobile-menu-link {
+  display: block;
+  padding: .625rem .75rem;
+  border-radius: .5rem;
+  color: #334155;
+  text-decoration: none;
+  transition: background-color .2s, color .2s;
+}
+.mobile-menu-link:hover { background-color: #faf5ff; color: #7e22ce; }
+.mobile-menu-link.is-active {
+  background-color: #faf5ff;
+  color: #7e22ce;
+}
+
+.mobile-menu-cta {
+  margin-top: .5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .5rem;
+  background-color: #9333ea;
+  color: #fff;
+  font-weight: 600;
+  padding: .625rem 1.25rem;
+  border-radius: .5rem;
+  text-decoration: none;
+  transition: background-color .2s;
+  box-shadow: 0 10px 15px -3px rgba(88, 28, 135, .2),
+              0 4px 6px -4px rgba(88, 28, 135, .2);
+}
+.mobile-menu-cta:hover { background-color: #7e22ce; }
